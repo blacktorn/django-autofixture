@@ -587,12 +587,13 @@ class ImageGenerator(Generator):
     Generates a valid palceholder image and saves it to the ``settings.MEDIA_ROOT``
     The returned filename is relative to ``MEDIA_ROOT``.
 
-    In case that filename already exists function will return hard link to the file.
+    In case that filename already exists function will return copy to the file.
 
     '''
 
     def generate(self):
         import uuid
+        import shutil
         from django.conf import settings
         from placeholder import PlaceHolderImage
 
@@ -605,7 +606,7 @@ class ImageGenerator(Generator):
         if os.path.isfile(file_path):
             suffix = str(uuid.uuid4())
             new_file_path = os.path.join(settings.MEDIA_ROOT, '_autofixture/', "_".join([suffix, filename]))
-            os.link(file_path, new_file_path)  # this is about to work only on linux :(
+            shutil.copyfile(file_path, new_file_path)
             file_path = new_file_path
         else:
             img = PlaceHolderImage(width = width, height = height, path = file_path)
